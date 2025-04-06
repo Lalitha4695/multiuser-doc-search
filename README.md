@@ -1,115 +1,118 @@
-# 🧠 Multi-User Document Search & Q&A System with Local Language Model (Offline RAG)
+# 🧠 Multi-User Document Search with Local Language Model (Offline RAG)
 
-This project is developed as part of the **Associate Architect interview at Quantiphi**. It demonstrates a modular, secure, and scalable **Retrieval-Augmented Generation (RAG)** system that allows users to query and converse with enterprise documents **locally**, without relying on any external APIs or internet connectivity.
+A secure, offline, and user-aware document retrieval and Q&A system developed as part of the **Associate Architect role interview at Quantiphi**. This project demonstrates how semantic search and local language models can be combined to power intelligent enterprise search solutions without relying on external APIs.
 
-## 🎯 Problem Statement
+---
 
-Organizations often deal with sensitive documents (e.g., financial reports, contracts) that must be queried intelligently without compromising security or data access control. This system solves that by:
+## 🚀 Features
 
-- Allowing users to ask natural language questions
-- Restricting responses to only those documents they are authorized to access
-- Generating responses using a **local language model** (e.g., Falcon, Flan-T5)
-- Preserving chat history for context continuity
+- 🔐 Per-user document access control
+- 🧠 Semantic search using FAISS + SentenceTransformers
+- 💬 Local model-based answer generation (Flan-T5)
+- 🖥️ Interactive UI with Streamlit
+- 📦 Fully offline (no API keys or internet)
+
+---
 
 ## 🛠️ Tech Stack
 
-| Layer          | Technology                            |
-|----------------|----------------------------------------|
-| Embedding      | `SentenceTransformers (MiniLM)`        |
-| Vector Search  | `FAISS`                                |
-| Language Model | `HuggingFace Transformers (offline)`   |
-| Backend Logic  | `Python`, `pickle`                     |
-| Frontend       | `Streamlit`                            |
+| Component       | Technology                    |
+|-----------------|-------------------------------|
+| Embeddings      | SentenceTransformers (MiniLM) |
+| Vector Search   | FAISS                         |
+| Language Model  | HuggingFace Flan-T5 (local)   |
+| UI              | Streamlit                     |
+| Storage         | Pickle-based chat memory      |
 
-## 🧩 Features
-
-- 🔐 Per-user document access control using email-to-company mapping.
-- 🧠 Semantic search on document chunks via FAISS.
-- 💬 Local LLM-based response generation (RAG).
-- 📂 Chat history memory per user session.
-- ⚙️ Offline-only, privacy-first design.
+---
 
 ## 🗂️ Project Structure
 
+```
 multiuser-doc-search/
 ├── app.py                    # Streamlit frontend
+├── requirements.txt          # Dependencies list
+├── README.md                 # Project overview
+│
 ├── scripts/
-│   ├── preprocess_docs.py    # Extracts text, chunks and indexes
-│   ├── access_control.py     # Email-based access check
-│   └── query_handler.py      # Vector search + local LLM inference
+│   ├── preprocess_docs.py    # PDF to chunks + embeddings
+│   ├── access_control.py     # Email → company access mapping
+│   └── query_handler.py      # RAG logic with Flan-T5 model
+│
 ├── users/
-│   └── user_access.json      # Maps email to company access
-├── data/raw_pdfs/            # Upload your PDFs here
-├── embeddings/faiss_index/   # Output of document embedding
-├── chat_context/             # Saved conversation history
-├── requirements.txt
-└── README.md
+│   └── user_access.json      # Static user access control
+│
+├── data/
+│   └── raw_pdfs/             # Input PDF documents
+│
+├── embeddings/
+│   └── faiss_index/          # Stores FAISS index + corpus.pkl
+│
+└── chat_context/
+    └── history_store.pkl     # Saved chat logs per user
+```
 
-## ⚙️ Setup Instructions
+---
 
-1. Clone & Install Requirements
+## ⚙️ How to Run Locally
+
+1. **Install Dependencies**
 ```bash
-git clone https://github.com/yourusername/multiuser-doc-search.git
-cd multiuser-doc-search
 pip install -r requirements.txt
 ```
 
-2. Add PDFs
-Place earnings reports or internal documents in:
+2. **Add Documents**
+Place your PDFs inside:
 ```
 data/raw_pdfs/
 ```
 
-3. Preprocess Documents
+3. **Preprocess for Search**
 ```bash
 cd scripts
 python preprocess_docs.py
-cd ..
 ```
 
-4. Run the App
+4. **Launch the App**
 ```bash
+cd ..
 streamlit run app.py
 ```
 
-## 👥 Example Users (Simulated)
+---
 
-| Email              | Companies Accessed     |
-|--------------------|------------------------|
-| alice@email.com    | Meta                   |
-| bob@email.com      | JPMorgan, AT&T         |
-| charlie@email.com  | Citi, Walmart          |
+## 👤 Demo Users
 
-Defined in `users/user_access.json`
+| Email              | Accessible Companies     |
+|--------------------|--------------------------|
+| alice@email.com    | Meta                     |
+| bob@email.com      | JPMorgan, AT&T           |
+| charlie@email.com  | Citi, Walmart            |
 
-## 🧠 Sample Usage
+---
 
-1. Login with a test email (e.g. alice@email.com)
-2. Ask: “What was Meta’s Q4 revenue?”
-3. System:
-   - Retrieves matching content from Meta-only documents
-   - Generates an answer using the local language model
-   - Saves the Q&A in chat history
+## 🧠 Sample Interaction
 
-## 🏗️ Architectural Principles
+1. User logs in with their email
+2. Enters query like: _“What was Meta's Q4 revenue?”_
+3. The system:
+   - Retrieves relevant passages (if accessible)
+   - Sends them to Flan-T5 for response generation
+   - Displays the result and saves it in chat history
 
-- Modularized folders: easy to swap in OpenAI, Pinecone, LangChain, etc.
-- Security-aware: enforces user-level data access
-- Offline-first: works in private environments with no internet
-- Scalable: easily extendable to multiple users, cloud deployment
+---
 
-## 🚀 Future Enhancements
+## 📦 Future Ideas
 
-- OAuth2 authentication (instead of plain email)
-- Docker containerization
-- Streamlit Cloud or private Kubernetes deployment
-- Support for image/PDF OCR extraction
-- Integration with ElasticSearch or Pinecone for enterprise scale
+- Replace static JSON with dynamic user authentication
+- Containerize with Docker
+- Add OCR layer for image-based PDFs
+- Switch to scalable vector DB (Pinecone, Weaviate)
+- LLM orchestration via LangChain or LlamaIndex
 
-## 📬 Author
+---
 
-**Sai Lalitha**  
-🎓 MSc in Control Systems & Microelectronics  
-💼 For Quantiphi's Associate Architect interview
+## 🧑‍💼 Author
 
-
+**Sai Lalitha Ponugupati**  
+Developed for the Associate Architect interview at **Quantiphi**
