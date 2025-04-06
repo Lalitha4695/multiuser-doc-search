@@ -1,0 +1,5 @@
+{
+  "alice@email.com": ["Meta"],
+  "bob@email.com": ["JPMorgan", "AT&T"],
+  "charlie@email.com": ["Citi", "Walmart"]
+}
