@@ -34,7 +34,14 @@ except:
 # Generate answer from local encoder-decoder model
 def generate_answer_with_local_model(context_chunks, query):
     context = "\n\n".join(context_chunks)
-    prompt = f"Use the following excerpts to answer the question:\n\n{context}\n\nQuestion: {query}"
+    prompt = f"""Use the following excerpts to answer the question:
+
+{context}
+
+Question: {query}
+
+If the information in the excerpts is insufficient to fully answer the question, acknowledge this in your response.
+"""
 
     inputs = tokenizer(prompt, return_tensors="pt", truncation=True, max_length=1024)
     with torch.no_grad():
@@ -53,9 +60,18 @@ def get_response(user_email, query):
 
     if context_chunks:
         answer = generate_answer_with_local_model(context_chunks, query)
-        results = [("Local AI Answer", answer)]
+        
+        # Add additional information lines
+        source_info = [f"Source: {metadata[I[0][i]]}" for i in range(min(3, len(I[0]))) 
+                      if I[0][i] < len(metadata) and metadata[I[0][i]] in allowed_companies]
+        
+        results = [
+            ("Local AI Answer", answer),
+            ("Additional Information", "\n".join(source_info))
+        ]
     else:
-        results = []
+        # when no relevant information is found
+        results = [("Response", "Not sufficient information found in the document to answer your query.")]
 
     # Maintain chat history
     if user_email not in chat_history:
